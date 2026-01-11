@@ -1,0 +1,414 @@
++<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الإحسان</title>
+    <!-- الأيقونات والخطوط -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --light-blue: #87CEEB;
+            --orange: #FF8C00;
+            --white: #FFFFFF;
+            --gray: #f4f4f4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--white);
+            max-width: 500px; /* لضمان مظهر الهاتف */
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+        }
+
+        /* الهيدر العلوي */
+        header {
+            background-color: var(--light-blue);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .search-trigger {
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 14px;
+        }
+
+        /* فيديو الترحيب */
+        .video-container {
+            width: 100%;
+            aspect-ratio: 9/16;
+            background: #000;
+        }
+
+        /* الأقسام */
+        .section {
+            display: none;
+            padding: 15px;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--orange);
+            border-bottom: 2px solid var(--light-blue);
+            padding-bottom: 5px;
+        }
+
+        /* المنتجات */
+        .products-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .product-card h4 { font-size: 14px; margin: 5px 0; }
+        .price { color: var(--orange); font-weight: bold; }
+
+        .btn-buy {
+            background: var(--light-blue);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .sale-badge {
+            background: red;
+            color: white;
+            font-size: 10px;
+            padding: 2px 5px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            border-radius: 3px;
+        }
+
+        /* شريط التنقل السفلي */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #ddd;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--orange);
+        }
+
+        .nav-item i { font-size: 20px; display: block; }
+
+        /* نموذج الطلب والفاتورة */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .invoice-card {
+            background: var(--gray);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .invoice-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 20px;
+            border: 1px solid var(--light-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h3>مكتبة الإحسان</h3>
+        <div class="search-trigger" onclick="showSection('search')">
+            <i class="fa fa-search"></i> بحث
+        </div>
+    </header>
+
+    <!-- قسم الرئيسية (الفيديو والمنتجات) -->
+    <div id="home" class="section active">
+        <div class="video-container">
+            <!-- تحويل رابط الشورتس ليعمل داخل الموقع -->
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/W4fHR60k6b0" frameborder="0" allowfullscreen></iframe>
+        </div>
+        
+        <br>
+        <div class="section-header">
+            <i class="fa fa-book"></i>
+            <h3>المنتجات المدرسية</h3>
+        </div>
+        
+        <div class="products-grid" id="mainProducts">
+            <!-- المنتجات تظهر هنا عبر JS -->
+        </div>
+    </div>
+
+    <!-- قسم البحث -->
+    <div id="search" class="section">
+        <div class="section-header">
+            <i class="fa fa-search"></i>
+            <h3>البحث عن المنتجات</h3>
+        </div>
+        <input type="text" class="search-bar" id="searchInp" onkeyup="searchProducts()" placeholder="اكتب اسم المنتج...">
+        <div class="products-grid" id="searchResults"></div>
+    </div>
+
+    <!-- قسم السلة -->
+    <div id="cart" class="section">
+        <div class="section-header">
+            <i class="fa fa-shopping-cart"></i>
+            <h3>سلة المشتريات</h3>
+        </div>
+        <div id="cartItems">السلة فارغة حالياً</div>
+    </div>
+
+    <!-- قسم Sould (تخفيضات) -->
+    <div id="sale" class="section">
+        <div class="section-header">
+            <i class="fa fa-percent"></i>
+            <h3>عروض التصفية (SOULD)</h3>
+        </div>
+        <div class="products-grid" id="saleProducts"></div>
+    </div>
+
+    <!-- نموذج المعلومات (Step 1) -->
+    <div id="formModal" class="modal">
+        <div class="modal-content">
+            <h4><i class="fa fa-user-edit"></i> معلومات الشحن</h4>
+            <br>
+            <input type="text" id="fName" placeholder="الاسم الشخصي">
+            <input type="text" id="lName" placeholder="النسب (العائلة)">
+            <input type="tel" id="phone" placeholder="رقم الهاتف">
+            <input type="email" id="email" placeholder="البريد الإلكتروني">
+            <input type="text" id="address" placeholder="العنوان">
+            <input type="text" id="city" placeholder="مكان الإقامة">
+            <button class="btn-buy" style="background: var(--orange); padding: 12px;" onclick="goToInvoice()">التالي</button>
+            <button class="btn-buy" style="background: #999;" onclick="closeModals()">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- الفاتورة (Step 2) -->
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content">
+            <h4><i class="fa fa-file-invoice-dollar"></i> فاتورة الطلب</h4>
+            <div id="invoiceBody" class="invoice-card"></div>
+            <button class="btn-buy" style="background: var(--orange); padding: 12px;" onclick="finalizeOrder()">اطلب الآن</button>
+            <button class="btn-buy" style="background: #999;" onclick="closeModals()">رجوع</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="showSection('home')">
+            <i class="fa fa-home"></i> الرئيسية
+        </div>
+        <div class="nav-item" onclick="showSection('search')">
+            <i class="fa fa-search"></i> البحث
+        </div>
+        <div class="nav-item" onclick="showSection('cart')">
+            <i class="fa fa-shopping-cart"></i> السلة
+        </div>
+        <div class="nav-item" onclick="showSection('sale')">
+            <i class="fa fa-tags"></i> SOULD
+        </div>
+    </nav>
+
+    <script>
+        // قاعدة بيانات المنتجات
+        const products = [
+            { id: 1, name: "دفتر مدرسي 100 ورقة", price: 15, sale: false, img: "https://img.icons8.com/clouds/100/book.png" },
+            { id: 2, name: "طقم أقلام حبر", price: 20, sale: true, img: "https://img.icons8.com/clouds/100/pen.png" },
+            { id: 3, name: "محفظة ظهر للأطفال", price: 150, sale: false, img: "https://img.icons8.com/clouds/100/backpack.png" },
+            { id: 4, name: "آلة حاسبة علمية", price: 85, sale: true, img: "https://img.icons8.com/clouds/100/calculator.png" },
+            { id: 5, name: "ممحاة وأدوات رسم", price: 10, sale: false, img: "https://img.icons8.com/clouds/100/paint-palette.png" },
+        ];
+
+        let selectedProduct = null;
+
+        // تبديل الأقسام
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // عرض المنتجات
+        function renderProducts() {
+            const mainGrid = document.getElementById('mainProducts');
+            const saleGrid = document.getElementById('saleProducts');
+            
+            mainGrid.innerHTML = '';
+            saleGrid.innerHTML = '';
+
+            products.forEach(p => {
+                const html = `
+                    <div class="product-card">
+                        ${p.sale ? '<span class="sale-badge">خصم</span>' : ''}
+                        <img src="${p.img}" alt="${p.name}">
+                        <h4>${p.name}</h4>
+                        <p class="price">${p.price} درهم</p>
+                        <button class="btn-buy" onclick="startPurchase(${p.id})">اشتري الآن</button>
+                    </div>
+                `;
+                mainGrid.innerHTML += html;
+                if(p.sale) saleGrid.innerHTML += html;
+            });
+        }
+
+        // البحث
+        function searchProducts() {
+            const val = document.getElementById('searchInp').value.toLowerCase();
+            const results = products.filter(p => p.name.toLowerCase().includes(val));
+            const resGrid = document.getElementById('searchResults');
+            resGrid.innerHTML = '';
+            results.forEach(p => {
+                resGrid.innerHTML += `
+                    <div class="product-card">
+                        <img src="${p.img}">
+                        <h4>${p.name}</h4>
+                        <p class="price">${p.price} درهم</p>
+                        <button class="btn-buy" onclick="startPurchase(${p.id})">شراء</button>
+                    </div>
+                `;
+            });
+        }
+
+        // بدء عملية الشراء
+        function startPurchase(id) {
+            selectedProduct = products.find(p => p.id === id);
+            document.getElementById('formModal').style.display = 'flex';
+        }
+
+        function closeModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+
+        // الانتقال للفاتورة
+        function goToInvoice() {
+            const fName = document.getElementById('fName').value;
+            const lName = document.getElementById('lName').value;
+            const city = document.getElementById('city').value;
+            
+            if(!fName || !lName || !city) {
+                alert("يرجى إكمال المعلومات الأساسية!");
+                return;
+            }
+
+            const shipping = 25; // ثمن الشحن
+            const total = selectedProduct.price + shipping;
+
+            document.getElementById('formModal').style.display = 'none';
+            document.getElementById('invoiceModal').style.display = 'flex';
+
+            document.getElementById('invoiceBody').innerHTML = `
+                <div style="text-align:center"><img src="${selectedProduct.img}" width="60"></div>
+                <div class="invoice-item"><b>المنتج:</b> <span>${selectedProduct.name}</span></div>
+                <div class="invoice-item"><b>الاسم:</b> <span>${fName} ${lName}</span></div>
+                <div class="invoice-item"><b>المدينة:</b> <span>${city}</span></div>
+                <hr style="margin:10px 0">
+                <div class="invoice-item"><span>سعر المنتج:</span> <span>${selectedProduct.price} درهم</span></div>
+                <div class="invoice-item"><span>سعر الشحن:</span> <span>${shipping} درهم</span></div>
+                <div class="invoice-item" style="color:var(--orange); font-weight:bold; font-size:18px;">
+                    <span>المجموع:</span> <span>${total} درهم</span>
+                </div>
+            `;
+        }
+
+        function finalizeOrder() {
+            alert("تم إرسال طلبك بنجاح! شكراً لثقتكم بمكتبة الإحسان.");
+            closeModals();
+        }
+
+        // تشغيل الوظائف عند التحميل
+        renderProducts();
+    </script>
+</body>
+</html>
